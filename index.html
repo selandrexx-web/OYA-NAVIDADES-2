@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twenty One Pilots</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            color: #f0f0f0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 850px;
+            width: 100%;
+            background-color: rgba(30, 30, 46, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            border: 2px solid #4a4a6d;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #5d5d8d;
+            position: relative;
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            color: #ffd700;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(to right, #ffd700, #ff8c00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #aaaacc;
+            margin-top: 10px;
+        }
+        
+        /* Reproductor de música mejorado */
+        .music-player-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+        
+        .music-toggle {
+            background: linear-gradient(135deg, #5d5d8d, #3a3a5e);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid #ffd700;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            z-index: 101;
+        }
+        
+        .music-toggle:hover {
+            background: linear-gradient(135deg, #6d6d9d, #4a4a6e);
+            transform: scale(1.1);
+        }
+        
+        .music-toggle i {
+            font-size: 1.8rem;
+            color: #ffd700;
+        }
+        
+        .music-player {
+            position: absolute;
+            top: 70px;
+            right: 0;
+            width: 300px;
+            background: rgba(40, 40, 60, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+            border: 2px solid #5d5d8d;
+            transform: translateY(-20px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+            z-index: 100;
+        }
+        
+        .music-player.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #5d5d8d;
+        }
+        
+        .player-header h3 {
+            color: #ffd700;
+            font-size: 1.3rem;
+        }
+        
+        .close-player {
+            background: none;
+            border: none;
+            color: #aaaacc;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .close-player:hover {
+            color: #ffd700;
+        }
+        
+        .song-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .album-cover {
+            width: 70px;
+            height: 70px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #ffd700;
+            flex-shrink: 0;
+        }
+        
+        .album-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .song-details h4 {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .song-details p {
+            color: #aaaacc;
+            font-size: 0.9rem;
+        }
+        
+        .progress-container {
+            background-color: #2a2a40;
+            height: 6px;
+            border-radius: 3px;
+            margin: 15px 0;
+            cursor: pointer;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(to right, #ffd700, #ff8c00);
+            height: 100%;
+            width: 0%;
+            border-radius: 3px;
+            transition: width 0.1s;
+        }
+        
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #aaaacc;
+            margin-bottom: 15px;
+        }
+        
+        .player-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .control-btn {
+            background: none;
+            border: none;
+            color: #ffd700;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .control-btn:hover {
+            background-color: rgba(255, 215, 0, 0.1);
+            transform: scale(1.1);
+        }
+        
+        .play-pause {
+            background-color: rgba(255, 215, 0, 0.2);
+            font-size: 1.8rem;
+        }
+        
+        .playlist {
+            margin-top: 15px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .playlist-title {
+            color: #aaaacc;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #3a3a5e;
+        }
+        
+        .playlist-item {
+            padding: 8px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+        
+        .playlist-item:hover {
+            background-color: rgba(90, 90, 140, 0.5);
+        }
+        
+        .playlist-item.active {
+            background-color: rgba(255, 215, 0, 0.15);
+            color: #ffd700;
+        }
+        
+        .playlist-item i {
+            font-size: 0.8rem;
+        }
+        
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .volume-container i {
+            color: #ffd700;
+        }
+        
+        .volume-slider {
+            flex-grow: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 5px;
+            background: #2a2a40;
+            border-radius: 3px;
+            outline: none;
+        }
+        
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #ffd700;
+            cursor: pointer;
+        }
+        
+        .quiz-container {
+            margin-top: 20px;
+        }
+        
+        .question {
+            background-color: rgba(40, 40, 60, 0.7);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #ffd700;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+        }
+        
+        .question:hover {
+            transform: translateY(-5px);
+        }
+        
+        .question h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: #ffd700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .option {
+            background-color: rgba(60, 60, 90, 0.7);
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .option:hover {
+            background-color: rgba(80, 80, 120, 0.9);
+            transform: translateX(5px);
+        }
+        
+        .option.selected {
+            background-color: rgba(255, 215, 0, 0.2);
+            border-color: #ffd700;
+        }
+        
+        .option.correct {
+            background-color: rgba(0, 200, 0, 0.3);
+            border-color: #00cc00;
+        }
+        
+        .option.incorrect {
+            background-color: rgba(255, 0, 0, 0.3);
+            border-color: #ff3333;
+        }
+        
+        .option-number {
+            background-color: #5d5d8d;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+        
+        .submit-btn {
+            display: block;
+            margin: 30px auto 0;
+            padding: 15px 40px;
+            background: linear-gradient(to right, #ffd700, #ff8c00);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+        
+        .submit-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.5);
+        }
+        
+        .submit-btn:disabled {
+            background: #666;
+            color: #aaa;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .gift-message {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            margin-top: 30px;
+            border: 3px solid #ffd700;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+            50% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.8); }
+            100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+        }
+        
+        .gift-message h2 {
+            font-size: 2.5rem;
+            color: #ffd700;
+            margin-bottom: 20px;
+        }
+        
+        .gift-message p {
+            font-size: 1.5rem;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+        
+        .tree {
+            font-size: 4rem;
+            margin: 20px 0;
+            color: #2e8b57;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        
+        .gift {
+            font-size: 3rem;
+            margin-top: 20px;
+            color: #ff4500;
+            animation: bounce 1.5s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        .score {
+            text-align: center;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #aaaacc;
+        }
+        
+        .score span {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        .band-symbols {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            opacity: 0.7;
+        }
+        
+        .band-symbols i {
+            font-size: 1.5rem;
+            color: #ffd700;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #5d5d8d;
+            color: #8888aa;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .band-image {
+            width: 150px;
+            height: 100px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #5d5d8d;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+        
+        .band-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .question h3 {
+                font-size: 1.2rem;
+            }
+            
+            .gift-message h2 {
+                font-size: 2rem;
+            }
+            
+            .gift-message p {
+                font-size: 1.2rem;
+            }
+            
+            .music-player {
+                width: 280px;
+                right: -10px;
+            }
+            
+            .band-image {
+                width: 120px;
+                height: 80px;
+            }
+            
+            .footer {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+        
+        /* Efectos de fondo */
+        .background-effect {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, rgba(255,215,0,0) 70%);
+            z-index: -1;
+        }
+        
+        /* Scrollbar personalizado */
+        .playlist::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .playlist::-webkit-scrollbar-track {
+            background: #2a2a40;
+            border-radius: 3px;
+        }
+        
+        .playlist::-webkit-scrollbar-thumb {
+            background: #ffd700;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-headphones-alt"></i>
+                <h1>TWENTY ONE PILOTS</h1>
+                <i class="fas fa-music"></i>
+            </div>
+            <p class="subtitle">Responde las 5 preguntas correctamente para descubrir tu regalo</p>
+        </div>
+        
+        <!-- Reproductor de música mejorado -->
+        <div class="music-player-container">
+            <div class="music-toggle" id="musicToggle">
+                <i class="fas fa-music"></i>
+            </div>
+            <div class="music-player" id="musicPlayer">
+                <div class="player-header">
+                    <h3>Reproductor TOP</h3>
+                    <button class="close-player" id="closePlayer">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="song-info">
+                    <div class="album-cover">
+                        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Album Cover" id="albumCover">
+                    </div>
+                    <div class="song-details">
+                        <h4 id="songTitle">Stressed Out</h4>
+                        <p id="songArtist">Twenty One Pilots</p>
+                    </div>
+                </div>
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                <div class="time-info">
+                    <span id="currentTime">0:00</span>
+                    <span id="duration">0:00</span>
+                </div>
+                <div class="player-controls">
+                    <button class="control-btn" id="prevBtn">
+                        <i class="fas fa-step-backward"></i>
+                    </button>
+                    <button class="control-btn play-pause" id="playPauseBtn">
+                        <i class="fas fa-play" id="playIcon"></i>
+                    </button>
+                    <button class="control-btn" id="nextBtn">
+                        <i class="fas fa-step-forward"></i>
+                    </button>
+                </div>
+                <div class="volume-container">
+                    <i class="fas fa-volume-up"></i>
+                    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="50">
+                </div>
+                <div class="playlist">
+                    <div class="playlist-title">Playlist TOP</div>
+                    <div class="playlist-item active" data-song="0">
+                        <i class="fas fa-play"></i>
+                        <span>The bridge</span>
+                    </div>
+                    <div class="playlist-item" data-song="1">
+                        <i class="fas fa-music"></i>
+                        <span>My Blood</span>
+                    </div>
+                    <div class="playlist-item" data-song="2">
+                        <i class="fas fa-music"></i>
+                        <span>Navigating</span>
+                    </div>
+                    <div class="playlist-item" data-song="3">
+                        <i class="fas fa-music"></i>
+                        <span> The Contract</span>
+                    </div>
+                    <div class="playlist-item" data-song="4">
+                        <i class="fas fa-music"></i>
+                        <span>At The Risk Of Feeling Dumb</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="score">
+            Puntuación: <span id="score">0</span>/5
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <!-- Las preguntas se generarán con JavaScript -->
+        </div>
+        
+        <button class="submit-btn" id="submitBtn" disabled>Verificar respuestas</button>
+        
+        <div class="gift-message" id="giftMessage">
+            <h2>¡Felicidades!</h2>
+            <p>Has respondido correctamente a todas las preguntas.</p>
+            <div class="tree">🎄</div>
+            <p>Tu regalo está debajo del árbol</p>
+            <div class="gift">🎁</div>
+            <div class="band-symbols">
+                <i class="fas fa-skull-crossbones"></i>
+                <i class="fas fa-fire"></i>
+                <i class="fas fa-dragon"></i>
+                <i class="fas fa-eye"></i>
+                <i class="fas fa-cross"></i>
+            </div>
+        </div>
+        
+    
+    <!-- Audio para la música de fondo -->
+    <audio id="backgroundMusic">
+        <!-- Las fuentes de audio se configurarán en JavaScript -->
+    </audio>
+    
+    <script>
+        // Preguntas y respuestas sobre Twenty One Pilots
+        const questions = [
+            {
+                question: "¿Cómo se llama el dúo musical que forma Twenty One Pilots?",
+                options: [
+                    "Tyler Joseph y Josh Dun",
+                    "Tyler Joseph y Mark Eshleman",
+                    "Josh Dun y Jenna Black",
+                    "Tyler Joseph y Nick Thomas"
+                ],
+                correct: 0,
+                fact: "Twenty One Pilots está formado por Tyler Joseph (voz, piano, ukelele, bajo) y Josh Dun (batería, percusión)."
+            },
+            {
+                question: "¿De qué ciudad de Ohio son originarios?",
+                options: [
+                    "Cleveland",
+                    "Columbus",
+                    "Cincinnati",
+                    "Dayton"
+                ],
+                correct: 1,
+                fact: "Twenty One Pilots se formó en Columbus, Ohio en 2009. Ambos miembros son originarios de esta ciudad."
+            },
+            {
+                question: "¿Cuál de estos álbumes ganó un premio Grammy?",
+                options: [
+                    "Vessel",
+                    "Blurryface",
+                    "Trench",
+                    "Scaled and Icy"
+                ],
+                correct: 2,
+                fact: "Trench ganó el Grammy al Mejor Álbum de Rock en 2019. El dúo también ganó un Grammy en 2017 por 'Stressed Out'."
+            },
+            {
+                question: "¿Qué símbolo representa comúnmente al grupo?",
+                options: [
+                    "Un ojo",
+                    "Una llama",
+                    "Una línea vertical |||",
+                    "Un triángulo"
+                ],
+                correct: 2,
+                fact: "El símbolo de Twenty One Pilots son tres líneas verticales (|||) que representan al dúo y sus seguidores."
+            },
+            {
+                question: "¿Qué canción los hizo famosos a nivel mundial en 2015?",
+                options: [
+                    "Ride",
+                    "Car Radio",
+                    "Stressed Out",
+                    "Heathens"
+                ],
+                correct: 2,
+                fact: "'Stressed Out' de su álbum 'Blurryface' (2015) fue un éxito mundial, alcanzando el top 5 en numerosos países."
+            }
+        ];
+        
+        // Lista de canciones con información adicional
+        const songs = [
+            {
+                title: "The bridge",
+                artist: "Twenty One Pilots",
+                src: "/music/Twenty One Pilots - City Walls (Official Video).mp3",
+                cover: "https://images.unsplash.com/photo-1516280440614-37939bbacd81?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+            },
+            {
+                title: "My Blood",
+                artist: "Twenty One Pilots",
+                src: "/music/twenty one pilots - My Blood (Official Video).mp3",
+                cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+            },
+            {
+                title: "Navigating",
+                artist: "Twenty One Pilots",
+                src: "/music/Twenty One Pilots - Navigating (Official Video).mp3",
+                cover: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+            },
+            {
+                title: " The Contract",
+                artist: "Twenty One Pilots",
+                src: "/music/Twenty One Pilots - The Contract (Official Video).mp3",
+                cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+            },
+            {
+                title: "Car Radio",
+                artist: "Twenty One Pilots",
+                src: "/music/Twenty One Pilots - At The Risk Of Feeling Dumb (Official Video).mp3",
+                cover: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+            }
+        ];
+        
+        // Variables del DOM
+        const quizContainer = document.getElementById('quizContainer');
+        const submitBtn = document.getElementById('submitBtn');
+        const giftMessage = document.getElementById('giftMessage');
+        const scoreElement = document.getElementById('score');
+        
+        // Elementos del reproductor
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        const musicToggle = document.getElementById('musicToggle');
+        const musicPlayer = document.getElementById('musicPlayer');
+        const closePlayer = document.getElementById('closePlayer');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const playIcon = document.getElementById('playIcon');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressBar = document.getElementById('progressBar');
+        const progressContainer = document.getElementById('progressContainer');
+        const currentTimeElement = document.getElementById('currentTime');
+        const durationElement = document.getElementById('duration');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const songTitle = document.getElementById('songTitle');
+        const songArtist = document.getElementById('songArtist');
+        const albumCover = document.getElementById('albumCover');
+        const playlistItems = document.querySelectorAll('.playlist-item');
+        
+        // Variables de estado
+        let selectedAnswers = new Array(questions.length).fill(-1);
+        let score = 0;
+        let isPlaying = false;
+        let currentSongIndex = 0;
+        
+        // Crear efectos de fondo dinámicos
+        function createBackgroundEffects() {
+            const container = document.querySelector('.container');
+            for (let i = 0; i < 15; i++) {
+                const effect = document.createElement('div');
+                effect.classList.add('background-effect');
+                
+                // Posición aleatoria
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                
+                // Tamaño aleatorio
+                const size = Math.random() * 100 + 50;
+                
+                effect.style.width = `${size}px`;
+                effect.style.height = `${size}px`;
+                effect.style.left = `${posX}%`;
+                effect.style.top = `${posY}%`;
+                effect.style.opacity = Math.random() * 0.3 + 0.1;
+                
+                container.appendChild(effect);
+            }
+        }
+        
+        // Crear las preguntas en el DOM
+        function createQuestions() {
+            questions.forEach((q, index) => {
+                const questionElement = document.createElement('div');
+                questionElement.className = 'question';
+                questionElement.innerHTML = `
+                    <h3><i class="fas fa-question-circle"></i> Pregunta ${index + 1}: ${q.question}</h3>
+                    <div class="options">
+                        ${q.options.map((option, optionIndex) => `
+                            <div class="option" data-question="${index}" data-option="${optionIndex}">
+                                <div class="option-number">${String.fromCharCode(65 + optionIndex)}</div>
+                                <div>${option}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                quizContainer.appendChild(questionElement);
+            });
+            
+            // Añadir eventos a las opciones
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const questionIndex = parseInt(this.dataset.question);
+                    const optionIndex = parseInt(this.dataset.option);
+                    
+                    // Deseleccionar otras opciones de la misma pregunta
+                    document.querySelectorAll(`.option[data-question="${questionIndex}"]`).forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // Seleccionar la opción clickeada
+                    this.classList.add('selected');
+                    
+                    // Guardar la respuesta seleccionada
+                    selectedAnswers[questionIndex] = optionIndex;
+                    
+                    // Verificar si todas las preguntas tienen respuesta
+                    checkAllAnswered();
+                });
+            });
+        }
+        
+        // Verificar si todas las preguntas tienen respuesta
+        function checkAllAnswered() {
+            const allAnswered = selectedAnswers.every(answer => answer !== -1);
+            submitBtn.disabled = !allAnswered;
+        }
+        
+        // Verificar respuestas
+        function checkAnswers() {
+            score = 0;
+            
+            questions.forEach((q, index) => {
+                const options = document.querySelectorAll(`.option[data-question="${index}"]`);
+                const selectedOption = selectedAnswers[index];
+                
+                // Marcar la respuesta correcta
+                options[q.correct].classList.add('correct');
+                
+                // Si el usuario seleccionó una respuesta incorrecta, marcarla
+                if (selectedOption !== q.correct && selectedOption !== -1) {
+                    options[selectedOption].classList.add('incorrect');
+                } else if (selectedOption === q.correct) {
+                    score++;
+                }
+                
+                // Deshabilitar clics en las opciones
+                options.forEach(option => {
+                    option.style.cursor = 'default';
+                    option.onclick = null;
+                });
+            });
+            
+            // Actualizar puntuación
+            scoreElement.textContent = score;
+            
+            // Mostrar mensaje de regalo si todas son correctas
+            if (score === questions.length) {
+                setTimeout(() => {
+                    giftMessage.style.display = 'block';
+                    giftMessage.scrollIntoView({ behavior: 'smooth' });
+                }, 1000);
+            }
+            
+            // Deshabilitar el botón de enviar
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Quiz completado";
+        }
+        
+        // Funciones del reproductor de música
+        function loadSong(songIndex) {
+            const song = songs[songIndex];
+            
+            // Actualizar la información de la canción
+            songTitle.textContent = song.title;
+            songArtist.textContent = song.artist;
+            albumCover.src = song.cover;
+            backgroundMusic.src = song.src;
+            
+            // Actualizar la lista de reproducción activa
+            playlistItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            playlistItems[songIndex].classList.add('active');
+            
+            // Reproducir la canción
+            playSong();
+        }
+        
+        function playSong() {
+            isPlaying = true;
+            backgroundMusic.play();
+            playIcon.className = 'fas fa-pause';
+            musicToggle.innerHTML = '<i class="fas fa-pause"></i>';
+        }
+        
+        function pauseSong() {
+            isPlaying = false;
+            backgroundMusic.pause();
+            playIcon.className = 'fas fa-play';
+            musicToggle.innerHTML = '<i class="fas fa-play"></i>';
+        }
+        
+        function updateProgress(e) {
+            const { duration, currentTime } = e.srcElement;
+            
+            // Actualizar barra de progreso
+            const progressPercent = (currentTime / duration) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+            
+            // Actualizar tiempos
+            const formatTime = (time) => {
+                const minutes = Math.floor(time / 60);
+                const seconds = Math.floor(time % 60);
+                return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            };
+            
+            currentTimeElement.textContent = formatTime(currentTime);
+            
+            if (!isNaN(duration)) {
+                durationElement.textContent = formatTime(duration);
+            }
+        }
+        
+        function setProgress(e) {
+            const width = this.clientWidth;
+            const clickX = e.offsetX;
+            const duration = backgroundMusic.duration;
+            
+            backgroundMusic.currentTime = (clickX / width) * duration;
+        }
+        
+        function changeVolume() {
+            backgroundMusic.volume = volumeSlider.value / 100;
+        }
+        
+        function prevSong() {
+            currentSongIndex--;
+            if (currentSongIndex < 0) {
+                currentSongIndex = songs.length - 1;
+            }
+            loadSong(currentSongIndex);
+        }
+        
+        function nextSong() {
+            currentSongIndex++;
+            if (currentSongIndex >= songs.length) {
+                currentSongIndex = 0;
+            }
+            loadSong(currentSongIndex);
+        }
+        
+        function toggleMusicPlayer() {
+            musicPlayer.classList.toggle('active');
+        }
+        
+        // Inicializar la página
+        function init() {
+            createBackgroundEffects();
+            createQuestions();
+            
+            // Configurar eventos del quiz
+            submitBtn.addEventListener('click', checkAnswers);
+            
+            // Configurar eventos del reproductor
+            musicToggle.addEventListener('click', toggleMusicPlayer);
+            closePlayer.addEventListener('click', toggleMusicPlayer);
+            playPauseBtn.addEventListener('click', () => {
+                isPlaying ? pauseSong() : playSong();
+            });
+            prevBtn.addEventListener('click', prevSong);
+            nextBtn.addEventListener('click', nextSong);
+            backgroundMusic.addEventListener('timeupdate', updateProgress);
+            progressContainer.addEventListener('click', setProgress);
+            volumeSlider.addEventListener('input', changeVolume);
+            
+            // Configurar eventos de la lista de reproducción
+            playlistItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const songIndex = parseInt(this.dataset.song);
+                    currentSongIndex = songIndex;
+                    loadSong(songIndex);
+                });
+            });
+            
+            // Cargar la primera canción
+            loadSong(currentSongIndex);
+            
+            // Reproducir automáticamente
+            playSong();
+            
+            // Configurar el volumen inicial
+            backgroundMusic.volume = 0.5;
+            volumeSlider.value = 50;
+            
+            // Cerrar el reproductor si se hace clic fuera de él
+            document.addEventListener('click', function(e) {
+                if (!musicPlayer.contains(e.target) && !musicToggle.contains(e.target) && musicPlayer.classList.contains('active')) {
+                    musicPlayer.classList.remove('active');
+                }
+            });
+        }
+        
+        // Inicializar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
